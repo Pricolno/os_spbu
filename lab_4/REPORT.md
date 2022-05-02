@@ -181,3 +181,130 @@ valgrind to help you find bugs.
 * malloc
 
 Для очищения памяти, не забываем реализовать функция удаления.
+
+
+## Part 2
+## Exercise 1
+>Generate random addresses with the following arguments: -s 0
+-n 10, -s 1 -n 10, and -s 2 -n 10. Change the policy from
+FIFO, to LRU, to OPT. Compute whether each access in said address
+traces are hits or misses.
+
+```shell 
+./paging-policy.py -s 0 -n 10 -c
+./paging-policy.py -s 0 -n 10 -c --policy=LRU
+./paging-policy.py -s 0 -n 10 -c --policy=OPT
+
+```
+
+
+```shell
+./paging-policy.py -s 1 -n 10 -c
+./paging-policy.py -s 1 -n 10 -c --policy=LRU
+./paging-policy.py -s 1 -n 10 -c --policy=OPT
+
+```
+
+
+```shell
+./paging-policy.py -s 2 -n 10 -c
+./paging-policy.py -s 2 -n 10 -c --policy=LRU
+./paging-policy.py -s 2 -n 10 -c --policy=OPT
+
+```
+
+## Exercise 2
+>For a cache of size 5, generate worst-case address reference streams
+for each of the following policies: FIFO, LRU, and MRU (worst-case
+reference streams cause the most misses possible. For the worst case
+reference streams, how much bigger of a cache is needed to improve
+performance dramatically and approach OPT?
+
+```shell
+./paging-policy.py --addresses=0,1,2,3,4,5,0,1,2,3,4,5 --policy=FIFO --cachesize=5 -c
+
+
+FINALSTATS hits 0   misses 12   hitrate 0.00
+```
+
+```shell
+./paging-policy.py --addresses=0,1,2,3,4,5,0,1,2,3,4,5 --policy=LRU --cachesize=5 -c
+
+FINALSTATS hits 0   misses 12   hitrate 0.00
+```
+
+```shell
+./paging-policy.py --addresses=0,1,2,3,4,5,4,5,4,5,4,5 --policy=MRU --cachesize=5 -c
+
+FINALSTATS hits 0   misses 12   hitrate 0.00
+```
+
+Увеличить кеш-память до кол-во адресов.
+
+## Exercise 3
+>Generate a random trace (use python or perl). How would you
+expect the different policies to perform on such a trace?
+
+
+Примерно одинакого все отстают до OPT, но RAND и FIFO  работают чуть лучше остальных. (На конкретной строке)
+
+```shell 
+./paging-policy.py -s 20 -n 100 -c
+FINALSTATS hits 33   misses 67   hitrate 33.00
+
+./paging-policy.py -s 20 -n 100 -c --policy=LRU
+FINALSTATS hits 28   misses 72   hitrate 28.00
+
+./paging-policy.py -s 20 -n 100 -c --policy=OPT
+FINALSTATS hits 50   misses 50   hitrate 50.00
+
+./paging-policy.py -s 20 -n 100 -c --policy=RAND
+FINALSTATS hits 34   misses 66   hitrate 34.00
+
+./paging-policy.py -s 20 -n 100 -c --policy=CLOCK
+FFINALSTATS hits 28   misses 72   hitrate 28.00
+
+
+```
+
+## Exercise 4
+>Now generate a trace with some locality. How can you generate
+such a trace? How does LRU perform on it? How much better than
+RAND is LRU? How does CLOCK do? How about CLOCK with
+different numbers of clock bits?
+
+Зафиксируем trace со "свойством локальности" (после обращения к адресу, большая вероятность обратится к нему же скоро). (./gen-trace.py - например, с вероятностью probPass выбирает равновероятно из последних lastCnt адресов) 
+
+```shell 
+python3 ./gen-trace.py 
+8,8,4,4,5,5,3,8,5,3,8,8,0,7,6,7,7,2,8,9,8,5,5,5,5,0,0,0,0,8
+```
+
+```shell
+./paging-policy.py --addresses=8,8,4,4,5,5,3,8,5,3,8,8,0,7,6,7,7,2,8,9,8,5,5,5,5,0,0,0,0,8 --policy=OPT -c
+
+FINALSTATS hits 19   misses 11   hitrate 63.33
+
+
+./paging-policy.py --addresses=8,8,4,4,5,5,3,8,5,3,8,8,0,7,6,7,7,2,8,9,8,5,5,5,5,0,0,0,0,8 --policy=LRU -c
+FINALSTATS hits 17   misses 13   hitrate 56.67
+
+
+./paging-policy.py --addresses=8,8,4,4,5,5,3,8,5,3,8,8,0,7,6,7,7,2,8,9,8,5,5,5,5,0,0,0,0,8 --policy=RAND -c
+
+FINALSTATS hits 15   misses 15   hitrate 50.00
+
+./paging-policy.py --addresses=8,8,4,4,5,5,3,8,5,3,8,8,0,7,6,7,7,2,8,9,8,5,5,5,5,0,0,0,0,8 --policy=CLOCK -c -b 2
+
+FINALSTATS hits 16   misses 14   hitrate 53.33
+
+
+./paging-policy.py --addresses=8,8,4,4,5,5,3,8,5,3,8,8,0,7,6,7,7,2,8,9,8,5,5,5,5,0,0,0,0,8 --policy=CLOCK -c -b 1
+
+FINALSTATS hits 15   misses 15   hitrate 50.00
+
+python3 ./paging-policy.py --addresses=8,8,4,4,5,5,3,8,5,3,8,8,0,7,6,7,7,2,8,9,8,5,5,5,5,0,0,0,0,8 --policy=CLOCK -c -b 4
+
+FINALSTATS hits 19   misses 11   hitrate 63.33
+
+```
