@@ -1,10 +1,12 @@
+# Лабораторная работа № 5
+
 Создайте в корне репозитория каталог lab5 и размещайте в ней все написанные в рамках задания программы и файл с отчётом (REPORT.md). Создавать пулл-реквест для отправки выполненного задания не следует, время выполнения будет определяться по времени соответствующих коммитов в папке лабораторной работы.
 
 
 Задание основывается на главах 26–28 книги Ремзи и Андреа Арпаччи-Дюссо «Операционные системы» (в приложенных файлах):
 
 * глава 26, все вопросы (стр. 341-342), [код](https://github.com/remzi-arpacidusseau/ostep-homework/tree/master/threads-intro)
-* глава 27, все вопросы (стр. 354), [код] (https://github.com/remzi-arpacidusseau/ostep-homework/tree/master/threads-api)
+* глава 27, все вопросы (стр. 354), [код](https://github.com/remzi-arpacidusseau/ostep-homework/tree/master/threads-api)
 * глава 28, вопросы 1–10 (стр. 378), [код](https://github.com/remzi-arpacidusseau/ostep-homework/tree/master/threads-locks)
 
 [
